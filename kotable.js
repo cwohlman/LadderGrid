@@ -1,63 +1,3 @@
-// doAttach is called before config and should attach a computed or observable, though you may attach any value you like.
-var doAttach = function (extender, args) {
-	this.extender = extender;
-	this.args = args;
-};
-var doComputed = function (computed) {
-	return new doExtend(function () {
-		return ko.computed(computed, this);
-	}, []);
-};
-// doExtend is called after config and would normally perform some init work
-// naming convention for extenders is _00Name where 00 is a priority (00 will run before 01) and Name is a descriptive name
-var doExtend = function (extender, args) {
-	this.extender = extender;
-	this.args = args;
-};
-var initializeInstance = function (self, config) {
-	this.entity = config;
-	// Attach first, then config properties will update observables/computeds 
-	// created by the extenders
-	for (var prop in self) {
-		var extender = self[prop];
-		if (extender instanceof doAttach) {
-			self[prop] = extender.extender.apply(self, extender.args);
-		}
-	}
-	for (var prop in config) {
-		if (config.hasOwnProperty(prop)) {
-			var val = config[prop];
-			if (ko.isObservable(self[prop])) self[prop](ko.unwrap(val));
-			else self[prop] = val;
-		}
-	}
-	for (var prop in self) {
-		var extender = self[prop];
-		if (extender instanceof doExtend) {
-			self[prop] = extender.extender.apply(self, extender.args);
-		}
-	}
-};
-
-var duplicatePrototypes = function (prototypes, extenders) {
-	var me = {};
-	for (var prop in prototypes) {
-		if (prototypes.hasOwnProperty(prop)) {
-			me[prop] = function (config) {
-				initializeInstance(this, config);
-			}
-			me[prop].prototype = new prototypes[prop];
-            me[prop].prototype.prototypes = me;
-		}
-	}
-	for (var i = 0; i < extenders.length; i++) {
-		var extender = extenders[i];
-		me[extender.proto] = extender.type == "attach" ? 
-			new doAttach(extender.extender, extender.args) :
-			new doExtend(extender.extender, extender.args);
-	};
-	return me;
-};
 
 koTable = { };
 
@@ -75,7 +15,37 @@ koTable.Table.prototype.columns = new doComputed(function () {
 		return new self.prototypes.Column(a);
 	});
 });
+koTable.Table.prototype.rows = new doComputed(function () {
+	var self = this;
+	return this.data.map(function (a) {
+		return new self.prototypes.Row(a);
+	});
+});
+koTable.Table.prototype.tBodyTemplate = new LadderTemplate({
+	elementType: 'tbody',
+	valueBinding: 'foreach',
+	valueSource: '$data.rows',
+	innerTemplate: LadderTemplate.defaultRender
+});
+koTable.Table.prototype.template = new LadderTemplate({
+	elementType: 'table',
+	css: ['table'],
+	valueBinding: '',
+	valueSource: '',
+	innerTemplate: koTable.Table.prototype.tBodyTemplate
+});
 
+koTable.Row.prototype.template = new LadderTemplate({
+	elementType: 'tr',
+	valueBinding: 'foreach',
+	valueSource: '$parent.columns',
+	innerTemplate: LadderTemplate.defaultRender
+});
+
+koTable.Column.prototype.template = new LadderTemplate({
+	elementType: 'td',
+	valueSource: '$parent.entity[$data.field]'
+});
 ko.applyBindings(koTable.Table.create({extenders: [], columnDefs: [
 	{field: "test"},
 	{field: "a"},
