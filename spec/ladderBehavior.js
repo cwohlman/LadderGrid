@@ -112,3 +112,31 @@ DescribeLadderPrototype("Ladder grandchild without knockout", Ladder.inherit(), 
 	window.ko = undefined;
 });
 
+describe("Ladder inheritance", function () {
+	it("should travel to multiple children", function () {
+		var prototype = Ladder.inherit();
+		prototype.attach("__test_property",function () {return 5});
+		var childtype = prototype.inherit();
+		childtype.attach("__test_property2", function () {return 6});
+		var babytype = childtype.inherit();
+		babytype.attach("__test_property3", function () {return 7});
+
+		var instance = new babytype({});
+
+		expect(instance["__test_property"]).toEqual(5);
+		expect(instance["__test_property2"]).toEqual(6);
+		expect(instance["__test_property3"]).toEqual(7);
+	})
+	it("should override parent prototype properties with child prototype properties", function () {
+		var prototype = Ladder.inherit();
+		prototype.attach("__test_property",function () {return 5});
+		var childtype = prototype.inherit();
+		childtype.attach("__test_property", function () {return 6});
+		var babytype = childtype.inherit();
+		babytype.attach("__test_property", function () {return 7});
+
+		var instance = new babytype({});
+
+		expect(instance["__test_property"]).toEqual(7);
+	})
+})
