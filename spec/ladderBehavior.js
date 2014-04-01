@@ -36,13 +36,6 @@ function DescribeLadderPrototype(name, prototype, setup, teardown) {
 			var instance = new prototype({});
 			expect(instance["__test_property"]).toEqual(5);
 		})
-		it("Should not inherit attached properties if no config object passed  in", function () {
-			prototype.attach("__test_property", function () {
-				return 6;
-			});
-			var instance = new prototype();
-			expect(instance["__test_property"]).toNotEqual(6);
-		})
 		it("Should create unique properties", function () {
 			prototype.attach("__test_property", function () {
 				return {};
@@ -138,5 +131,17 @@ describe("Ladder inheritance", function () {
 		var instance = new babytype({});
 
 		expect(instance["__test_property"]).toEqual(7);
+	})
+	it("should not initialize prototype properties when calling the inherit method", function () {
+		var prototype = Ladder.inherit();
+		prototype.attach("__test_property", function () {
+			return this["__test_property2"];
+		});
+		var prototype2 = prototype.inherit();
+		prototype2.attach("__test_property2", function () {
+			return 11;
+		});
+		var instance = new prototype2();
+		expect(instance["__test_property"]).toEqual(11);
 	})
 })

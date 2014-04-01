@@ -31,74 +31,100 @@ ladderGrid.Table.prototype.rows = new doComputed(function () {
 //         innerTemplate: LadderTemplate.defaultRender
 //     })
 // })
-ladderGrid.Table.prototype.tBodyTemplate = new LadderTemplate({
-	elementType: 'tbody',
-	valueBinding: 'foreach',
-	valueSource: '$data.rows',
-	innerTemplate: LadderTemplate.defaultRender
+// 
+
+ladderGrid.tbodyTemplate = LadderTemplate.inherit();
+ladderGrid.tbodyTemplate.attach('elementType', function () { return 'tbody'; });
+ladderGrid.tbodyTemplate.attach('valueBinding', function () { return 'foreach'; });
+ladderGrid.tbodyTemplate.attach('valueSource', function () { return '$data.rows'; });
+ladderGrid.tbodyTemplate.attach('innerTemplate', function () { return new LadderTemplate.RenderTemplate(); });
+
+ladderGrid.theadTemplate = LadderTemplate.inherit();
+ladderGrid.theadTemplate.attach('elementType', function () { return 'thead'; });
+ladderGrid.theadTemplate.attach('valueBinding', function () { return ''; });
+ladderGrid.theadTemplate.attach('valueSource', function () { return '$data.columns'; });
+ladderGrid.theadTemplate.attach('innerTemplate', function () { return new LadderTemplate.RenderTemplate({
+	valueSource: '$data.headerTemplate'
+}); });
+
+ladderGrid.tfootTemplate = LadderTemplate.inherit();
+ladderGrid.tfootTemplate.attach('elementType', function () { return 'tfoot'; });
+ladderGrid.tfootTemplate.attach('valueBinding', function () { return ''; });
+ladderGrid.tfootTemplate.attach('valueSource', function () { return '$data.columns'; });
+ladderGrid.tfootTemplate.attach('innerTemplate', function () { return new LadderTemplate.RenderTemplate({
+	valueSource: '$data.footerTemplate'
+}); });
+
+ladderGrid.footerTemplate = LadderTemplate.inherit();
+ladderGrid.footerTemplate.attach('elementType', function () { return 'tr'; });
+ladderGrid.footerTemplate.attach('valueBinding', function () { return 'foreach'; });
+ladderGrid.footerTemplate.attach('valueSource', function () { return '$data.columns'; });
+ladderGrid.footerTemplate.attach('innerTemplate', function () { return new LadderTemplate.RenderTemplate({
+	valueSource: '$data.footerTemplate'
+}); });
+
+ladderGrid.headerTemplate = LadderTemplate.inherit();
+ladderGrid.headerTemplate.attach('elementType', function () { return 'tr'; });
+ladderGrid.headerTemplate.attach('valueBinding', function () { return 'foreach'; });
+ladderGrid.headerTemplate.attach('valueSource', function () { return '$data.columns'; });
+ladderGrid.headerTemplate.attach('innerTemplate', function () { return new LadderTemplate.RenderTemplate({
+	valueSource: '$data.headerTemplate'
+}); });
+
+ladderGrid.gridTemplate = LadderTemplate.inherit();
+ladderGrid.gridTemplate.attach('templateSource', function () { return $('#tableTemplate').html(); });
+
+ladderGrid.rowTemplate = LadderTemplate.inherit();
+ladderGrid.rowTemplate.attach('elementType', function () { return 'tr'; });
+ladderGrid.rowTemplate.attach('valueBinding', function () { return 'foreach'; });
+ladderGrid.rowTemplate.attach('valueSource', function () { return '$parent.columns'; });
+ladderGrid.rowTemplate.attach('innerTemplate', function () { return new LadderTemplate.RenderTemplate(); });
+
+ladderGrid.cellTemplate = LadderTemplate.inherit();
+ladderGrid.cellTemplate.attach('elementType', function () { return 'td'; });
+ladderGrid.cellTemplate.attach('valueSource', function () { return '$parent.entity[$data.field]'; });
+
+ladderGrid.headerCellTemplate = ladderGrid.cellTemplate.inherit();
+ladderGrid.headerCellTemplate.attach("elementType", function () {return 'th';});
+ladderGrid.headerCellTemplate.attach("valueSource", function () {return '$data.field';});
+
+
+ladderGrid.footerCellTemplate = ladderGrid.cellTemplate.inherit();
+ladderGrid.footerCellTemplate.attach("elementType", function () {return 'th';});
+ladderGrid.footerCellTemplate.attach("valueSource", function () {return '$data.field';});
+
+
+ladderGrid.Table.attach("gridTemplate", function () {
+	return this.template = new this.prototypes.gridTemplate(this.entity.gridTemplate);
 });
-ladderGrid.Table.prototype.tHeadTemplate = new LadderTemplate({
-	elementType: 'thead',
-	valueBinding: '',
-	valueSource: '$data.columns',
-	innerTemplate: new LadderTemplate({ // we should create a shortcut for this kind of inner template
-		elementType: 'virtual',
-		valueBinding: 'render',
-		valueSource: '$data.headerTemplate'
-	})
+ladderGrid.Table.attach("tbodyTemplate", function () {
+	return new this.prototypes.tbodyTemplate(this.entity.tbodyTemplate);
 });
-ladderGrid.Table.prototype.tFootTemplate = new LadderTemplate({
-	elementType: 'tfoot',
-	valueSource: '$data.columns',
-	valueBinding: '',
-	innerTemplate: new LadderTemplate({
-		elementType: 'virtual',
-		valueBinding: 'render',
-		valueSource: '$data.footerTemplate'
-	})
+ladderGrid.Table.attach("theadTemplate", function () {
+	return new this.prototypes.theadTemplate(this.entity.theadTemplate);
 });
-ladderGrid.Table.prototype.footerTemplate = new LadderTemplate({
-	elementType: 'tr',
-	valueSource: '$data.columns',
-	valueBinding: 'foreach',
-	innerTemplate: new LadderTemplate({
-		elementType: 'virtual',
-		valueBinding: 'render',
-		valueSource: '$data.footerTemplate'
-	})
-})
-ladderGrid.Table.prototype.headerTemplate = new LadderTemplate({
-	elementType: 'tr',
-	valueSource: '$data.columns',
-	valueBinding: 'foreach',
-	innerTemplate: new LadderTemplate({
-		elementType: 'virtual',
-		valueBinding: 'render',
-		valueSource: '$data.headerTemplate'
-	})
-})
-ladderGrid.Table.prototype.template = new LadderTemplate({
-	templateSource: $('#tableTemplate').html() // instead of using templateSource we should allow an array of inner templates.
+ladderGrid.Table.attach("tfootTemplate", function () {
+	return new this.prototypes.tfootTemplate(this.entity.tfootTemplate);
+});
+ladderGrid.Table.attach("footerTemplate", function () {
+	return new this.prototypes.footerTemplate(this.entity.footerTemplate);
+});
+ladderGrid.Table.attach("headerTemplate", function () {
+	return new this.prototypes.headerTemplate(this.entity.headerTemplate);
 });
 
-ladderGrid.Row.prototype.template = new LadderTemplate({
-	elementType: 'tr',
-	valueBinding: 'foreach',
-	valueSource: '$parent.columns',
-	innerTemplate: LadderTemplate.defaultRender
+ladderGrid.Row.attach("rowTemplate", function () {
+	return this.template = new this.prototypes.rowTemplate(this.entity.rowTemplate);
 });
 
-ladderGrid.Column.prototype.template = new LadderTemplate({
-	elementType: 'td',
-	valueSource: '$parent.entity[$data.field]'
+ladderGrid.Column.attach("cellTemplate", function () {
+	return this.template = new this.prototypes.cellTemplate(this.entity.cellTemplate);
 });
-ladderGrid.Column.prototype.headerTemplate = new LadderTemplate({
-	elementType: 'th',
-	valueSource: '$data.field'
+ladderGrid.Column.attach("headerCellTemplate", function () {
+	return this.headerTemplate = new this.prototypes.headerCellTemplate(this.entity.headerCellTemplate);
 });
-ladderGrid.Column.prototype.footerTemplate = new LadderTemplate({
-	elementType: 'th',
-	valueSource: '$data.field'
+ladderGrid.Column.attach("footerCellTemplate", function () {
+	return this.footerTemplate = new this.prototypes.footerCellTemplate(this.entity.footerCellTemplate);
 });
 
 ko.applyBindings(ladderGrid.Table.create({extenders: [], columnDefs: [

@@ -6,7 +6,7 @@ var Ladder = function () {};
 
 Ladder.prototype.init = function (config) {
 	var self = this;
-	if (config) {
+	if (!(config instanceof dontInit)) {
 		// Only initialize if config is passed, this allows us to create sub-prototypes
 		if (this.attachEntity) this.entity = config;
 		for (var prop in self) {
@@ -53,7 +53,7 @@ Ladder.inherit = Ladder.prototype.inherit = function () {
 	ctor.attach = Ladder.prototype.attach;
 	ctor.extend = Ladder.prototype.extend;
 	ctor.inherit = Ladder.prototype.inherit;
-	ctor.prototype = new this();
+	ctor.prototype = new this(new dontInit());
 	return ctor;
 };
 
@@ -63,6 +63,7 @@ Ladder.createPrototypes = function (prototypes) {
 	return duplicatePrototypes(prototypes);
 }
 
+var dontInit = function () {};
 
 // doAttach is called before config and should attach a computed or observable, though you may attach any value you like.
 var doAttach = function (extender, args) {

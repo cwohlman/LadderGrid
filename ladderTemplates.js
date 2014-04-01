@@ -91,16 +91,15 @@ LadderTemplate.attach("render", function () {
     };
 });
 
-LadderTemplate.defaultRender = new LadderTemplate({
-    elementType: 'virtual',
-    valueSource: "$data.template",
-    valueBinding: "render"
-});
+LadderTemplate.RenderTemplate = LadderTemplate.inherit();
+LadderTemplate.RenderTemplate.attach("elementType", function () { return 'virtual'; });
+LadderTemplate.RenderTemplate.attach("valueSource", function () { return '$data.template'; });
+LadderTemplate.RenderTemplate.attach("valueBinding", function () { return 'render'; });
 
 ko.bindingHandlers.render = {
     init: function (element, valueAccessor) {
         var doj = valueAccessor();
-        if (!(doj instanceof LadderTemplate)) throw new Error("value must be an instance of LadderTemplate");
+        //if (!(doj instanceof LadderTemplate)) throw new Error("value must be an instance of LadderTemplate");
         var child = doj.render();
         ko.virtualElements.emptyNode(element);
         for (var i = child.length - 1; i >= 0; i--) {
