@@ -85,11 +85,8 @@ var duplicatePrototypes = function (prototypes, extenders) {
 	var me = {};
 	for (var prop in prototypes) {
 		if (prototypes.hasOwnProperty(prop)) {
-			me[prop] = function (config) {
-				initializeInstance(this, config);
-			}
-			me[prop].prototype = new prototypes[prop];
-            me[prop].prototype.prototypes = me;
+			me[prop] = prototypes[prop].inherit();
+			me[prop].prototype.prototypes = me;
 		}
 	}
 	for (var i = 0; i < extenders.length; i++) {

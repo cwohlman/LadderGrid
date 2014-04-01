@@ -2,9 +2,9 @@
 
 koTable = { };
 
-koTable.Table = function () {};
-koTable.Column = function () {};
-koTable.Row = function () {};
+koTable.Table = Ladder.inherit();
+koTable.Column = Ladder.inherit();
+koTable.Row = Ladder.inherit();
 
 koTable.Table.create = function (config) {
     var me = duplicatePrototypes(koTable, config.extenders);
