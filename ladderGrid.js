@@ -1,29 +1,29 @@
 
 
-koTable = { };
+ladderGrid = { };
 
-koTable.Table = Ladder.inherit();
-koTable.Column = Ladder.inherit();
-koTable.Row = Ladder.inherit();
+ladderGrid.Table = Ladder.inherit();
+ladderGrid.Column = Ladder.inherit();
+ladderGrid.Row = Ladder.inherit();
 
-koTable.Table.create = function (config) {
-    var me = duplicatePrototypes(koTable, config.extenders);
+ladderGrid.Table.create = function (config) {
+    var me = duplicatePrototypes(ladderGrid, config.extenders);
     return new me.Table(config);
 }
-koTable.Table.prototype.columns = new doComputed(function () {
+ladderGrid.Table.prototype.columns = new doComputed(function () {
 	var self = this;
 	return this.columnDefs.map(function (a) {
 		return new self.prototypes.Column(a);
 	});
 });
-koTable.Table.prototype.rows = new doComputed(function () {
+ladderGrid.Table.prototype.rows = new doComputed(function () {
 	var self = this;
 	return this.data.map(function (a) {
 		return new self.prototypes.Row(a);
 	});
 });
 
-// Should be: koTable.Table.prototype.tBodyTemplate = new doAttach(function () {
+// Should be: ladderGrid.Table.prototype.tBodyTemplate = new doAttach(function () {
 //     return new LadderTemplate({	
 //         elementType: 'tbody',
 //         valueBinding: 'foreach',
@@ -31,13 +31,13 @@ koTable.Table.prototype.rows = new doComputed(function () {
 //         innerTemplate: LadderTemplate.defaultRender
 //     })
 // })
-koTable.Table.prototype.tBodyTemplate = new LadderTemplate({
+ladderGrid.Table.prototype.tBodyTemplate = new LadderTemplate({
 	elementType: 'tbody',
 	valueBinding: 'foreach',
 	valueSource: '$data.rows',
 	innerTemplate: LadderTemplate.defaultRender
 });
-koTable.Table.prototype.tHeadTemplate = new LadderTemplate({
+ladderGrid.Table.prototype.tHeadTemplate = new LadderTemplate({
 	elementType: 'thead',
 	valueBinding: '',
 	valueSource: '$data.columns',
@@ -47,7 +47,7 @@ koTable.Table.prototype.tHeadTemplate = new LadderTemplate({
 		valueSource: '$data.headerTemplate'
 	})
 });
-koTable.Table.prototype.tFootTemplate = new LadderTemplate({
+ladderGrid.Table.prototype.tFootTemplate = new LadderTemplate({
 	elementType: 'tfoot',
 	valueSource: '$data.columns',
 	valueBinding: '',
@@ -57,7 +57,7 @@ koTable.Table.prototype.tFootTemplate = new LadderTemplate({
 		valueSource: '$data.footerTemplate'
 	})
 });
-koTable.Table.prototype.footerTemplate = new LadderTemplate({
+ladderGrid.Table.prototype.footerTemplate = new LadderTemplate({
 	elementType: 'tr',
 	valueSource: '$data.columns',
 	valueBinding: 'foreach',
@@ -67,7 +67,7 @@ koTable.Table.prototype.footerTemplate = new LadderTemplate({
 		valueSource: '$data.footerTemplate'
 	})
 })
-koTable.Table.prototype.headerTemplate = new LadderTemplate({
+ladderGrid.Table.prototype.headerTemplate = new LadderTemplate({
 	elementType: 'tr',
 	valueSource: '$data.columns',
 	valueBinding: 'foreach',
@@ -77,31 +77,31 @@ koTable.Table.prototype.headerTemplate = new LadderTemplate({
 		valueSource: '$data.headerTemplate'
 	})
 })
-koTable.Table.prototype.template = new LadderTemplate({
+ladderGrid.Table.prototype.template = new LadderTemplate({
 	templateSource: $('#tableTemplate').html() // instead of using templateSource we should allow an array of inner templates.
 });
 
-koTable.Row.prototype.template = new LadderTemplate({
+ladderGrid.Row.prototype.template = new LadderTemplate({
 	elementType: 'tr',
 	valueBinding: 'foreach',
 	valueSource: '$parent.columns',
 	innerTemplate: LadderTemplate.defaultRender
 });
 
-koTable.Column.prototype.template = new LadderTemplate({
+ladderGrid.Column.prototype.template = new LadderTemplate({
 	elementType: 'td',
 	valueSource: '$parent.entity[$data.field]'
 });
-koTable.Column.prototype.headerTemplate = new LadderTemplate({
+ladderGrid.Column.prototype.headerTemplate = new LadderTemplate({
 	elementType: 'th',
 	valueSource: '$data.field'
 });
-koTable.Column.prototype.footerTemplate = new LadderTemplate({
+ladderGrid.Column.prototype.footerTemplate = new LadderTemplate({
 	elementType: 'th',
 	valueSource: '$data.field'
 });
 
-ko.applyBindings(koTable.Table.create({extenders: [], columnDefs: [
+ko.applyBindings(ladderGrid.Table.create({extenders: [], columnDefs: [
 	{field: "test"},
 	{field: "a"},
 	{field: "b"},
