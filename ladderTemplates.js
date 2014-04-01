@@ -67,6 +67,7 @@ LadderTemplate.prototype.renderVirtual = function () {
 }
 LadderTemplate.prototype.render = function () {
     if (this.elementType == "virtual") return this.renderVirtual();
+    if (this.templateSource) return $(this.templateSource);
     var result = $("<" + this.elementType + ">"),
         bindings = this.allBindings(),
         attributes = this.allAttributes()

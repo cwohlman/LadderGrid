@@ -7,9 +7,20 @@
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 </head>
 <body>
-	<div data-bind="render: $data.template">
+	<div data-bind="render: $data.template" class="container">
 		
 	</div>
+	<script id="tableTemplate" type="text/html">
+	<table class="table">
+		<!-- ko render: tHeadTemplate -->
+		<!-- /ko -->
+		<!-- ko render: tBodyTemplate -->
+		<!-- /ko -->
+		<!-- ko render: tFootTemplate -->
+		<!-- /ko -->
+	</table>
+
+	</script>
 	<script type="text/javascript" src="ko.ladderTemplates.js"></script>
 	<script type="text/javascript" src="ko.prototypes.js"></script>
 	<script type="text/javascript" src="kotable.js"></script>

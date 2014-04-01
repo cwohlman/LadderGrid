@@ -11,6 +11,8 @@
         <link rel="stylesheet" type="text/css" href="lib/jasmine.extensions.css" />
         <script type="text/javascript" src="lib/jasmine.extensions.js"></script>
 
+        <script type="text/javascript" src="../knockout.js"></script>
+        <script type="text/javascript" src="../ladder.js"></script>
         <!-- knockout -->
         <script type="text/javascript">
             // By default, we run the tests against knockout-raw.js, but you can specify an alternative test
@@ -18,11 +20,11 @@
             // This is used by our automated test runners (PhantomJS and Testling CI).
             (function() {
                 var koFilenameParam = location.href.match(/[?&]src=([^&]+)/);
-                jasmine.addScriptReference("../" + (koFilenameParam ? koFilenameParam[1] : "kotable.js"));
+                jasmine.addScriptReference("../" + (koFilenameParam ? koFilenameParam[1] : "ladderGrid.js"));
             })();
         </script>
         <!-- specs -->
-        <script type="text/javascript" src="ktableBehavior.js"></script>
+        <script type="text/javascript" src="ladderBehavior.js"></script>
     </head>
     <body>
         <script type="text/javascript">
