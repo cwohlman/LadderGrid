@@ -126,13 +126,3 @@ ladderGrid.Column.attach("headerCellTemplate", function () {
 ladderGrid.Column.attach("footerCellTemplate", function () {
 	return this.footerTemplate = new this.prototypes.footerCellTemplate(this.entity.footerCellTemplate);
 });
-
-ko.applyBindings(ladderGrid.Table.create({extenders: [], columnDefs: [
-	{field: "test"},
-	{field: "a"},
-	{field: "b"},
-	], data: [
-	{test: 5, a: 6, b: 5},
-	{test: 5, a: 6, b: 5},
-	{test: 5, a: 6, b: 5}
-	]}));

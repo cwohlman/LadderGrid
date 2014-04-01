@@ -92,9 +92,10 @@ var duplicatePrototypes = function (prototypes, extenders) {
 	}
 	for (var i = 0; i < extenders.length; i++) {
 		var extender = extenders[i];
-		me[extender.proto] = extender.type == "attach" ? 
-			new doAttach(extender.extender, extender.args) :
-			new doExtend(extender.extender, extender.args);
+		if(extender.type == "attach")
+			me[extender.proto].attach(extender.name, extender.extender, extender.args);
+		else
+			me[extender.proto].extend(extender.name, extender.extender, extender.args);
 	};
 	return me;
 };
